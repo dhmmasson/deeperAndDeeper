@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float rotationSpeed; 
+    public float rotationSpeed;
     //Use physic update for movement ?
+
+ 
     void FixedUpdate()
     {
-        float rotation = Input.GetAxis("Horizontal") * rotationSpeed;
+        float rotation = - Input.GetAxis("Horizontal") * rotationSpeed;
         
         rotation *= Time.deltaTime;
         // Rotate around our y-axis

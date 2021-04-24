@@ -2,11 +2,13 @@ Shader "Autosterogram/Noise"
 {
     Properties
     {
+        [HideInInspector] 
         _MainTex ("Main texture", 2D) = "white" {}
         _Noise ("Noise", 2D) = "white" {}
         _bwBlend ("Black & White blend", Range (0, 1)) = 0
-        _pixels ( "Number of pixels", Range( 0, 256 ) ) = 223.
+        _pixels ( "Number of pixels", Range( 0, 256 ) ) = 123.
         _blend ( "anisotropic", Range( 0, 1 ) ) = 1
+        _Color ( "color", Color ) = (1,1,0,1)
     }
     SubShader
     {
@@ -27,8 +29,10 @@ Shader "Autosterogram/Noise"
             float4 _MainTex_ST;
             uniform float _bwBlend;
             sampler2D _CameraDepthTexture;
+            sampler2D _Noise;
             fixed _pixels ;
             fixed _blend ;
+            float4 _Color ; 
             
 
             struct appdata
@@ -52,7 +56,7 @@ Shader "Autosterogram/Noise"
             }
             //Proablebly from shadertoy 
             float3 N23( float2 uv ) {         
-              return (hashOld33( float3( floor( 79.*uv)/237., sin(_Time.y*0.003 ) ) ));
+              return (hashOld33( float3( floor( _pixels*uv)/237., sin(_Time.y*0.003 ) ) ));
               //   Smoooth noise between fram
               //   +  hashOld33( float3( floor( 79.*uv)/237., sin( (_Time.y - unity_DeltaTime.x )*0.003 ) )))/2.   ;
 
@@ -81,8 +85,6 @@ Shader "Autosterogram/Noise"
                 gv_s = ( _pixels != 0 ) ? 2.*floor( _pixels * uv_s / 2. + .5 ) / _pixels   : uv_s ;
                 float border = sign( gv_s.x * gv_s.y) * (length( gv_s ) ) ;
                 return lerp( gv_s , N23( gv_t ).xy * border + N23( gv_s ).xy * (1-border), _blend  )   ;
-
-
             }
 
             //From all all code of mine
@@ -114,17 +116,13 @@ Shader "Autosterogram/Noise"
                   //décalage
                 gv.x += displacement ;
                 gv.x /= width ;
-                    
+                // Map to texture coordinate                    
                 gv = frac( gv ) ;
-
-                
-                //col =  tex2D(_MainTex, uv_original );    
-                //float3 noise = N23(gv) ;// ( 30. /137. ) ;
-
-                //col.rgb *= noise.x ;           
-                //col.rg = noise.y ;
-                //col = 0 ; 
-                col.rg = tile( gv ) ; 
+                //Random tile noise
+                col.rg = tile( gv ) ;
+                col.rgb = N23( gv ).xyx * _Color  ;
+                //col.rgb =  tex2D(  _Noise, N23( gv ).xy  ) ;
+              //  col.rgb = tex2D(  _MainTex, uv_original ) ; 
                 return col;
             }
             ENDCG

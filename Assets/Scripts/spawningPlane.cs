@@ -10,9 +10,20 @@ public class spawningPlane : MonoBehaviour
     public float timeS;
     void Start()
     {
-        spawn();
-        
+        Time.timeScale = 0; 
+        spawn();        
         StartCoroutine("SpawnObstacle");
+    }
+
+    private void Update()
+    {
+        //Start game
+        //TODO: move to actual game controler class
+        if (Input.anyKey)
+        {
+            Time.timeScale = 1;
+        }
+
     }
 
     private IEnumerator SpawnObstacle()

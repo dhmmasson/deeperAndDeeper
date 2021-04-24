@@ -11,15 +11,11 @@ public class Autostereogram : MonoBehaviour
        // Camera.main.depthTextureMode = DepthTextureMode.Depth;
        // Camera.main.SetReplacementShader(autostereogramShader, "Opaque");
     }
-    // Update is called once per frame
-    void Update()
-    {
-        
-        
-    }
+
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         Graphics.Blit(source, destination, main);
+        
     }
 
 }
