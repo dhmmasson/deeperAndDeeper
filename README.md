@@ -1,6 +1,20 @@
 # deeperAndDeeper
 Ld 48 submission
 
+# Current State
+updated 6:34.
+Basic game idea
+
+*   you are a falling rectangle,
+*   you can rotate with keyboard left and right
+*   you must avoid two planes that are offset from the center.
+
+that's it... there is a depth indicator on the top of the screen
+
+In reality the plane are falling, camera and player are fixed.
+Falling should be done at constant speed...
+falling markers should be added 
+
 # Ideas :
 -   **visual effect** deeper and deeper = Hypnosis / trance => using [autostereogram](https://en.wikipedia.org/wiki/Autostereogram) ( magic image ) to put the player into a trance like state
 -   **gameplay** one of this game where your piece fall through holes of various shape continuously and you have to navigate this vertical maze **deeper and deeper**
