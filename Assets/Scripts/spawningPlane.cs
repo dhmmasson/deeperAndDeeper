@@ -6,7 +6,8 @@ public class spawningPlane : MonoBehaviour
 {
     public GameObject obstacle;
     public float interval;
-    public float timeScale = 0.99f; 
+    public float timeScale = 0.99f;
+    public float timeS;
     void Start()
     {
         spawn();
@@ -20,7 +21,8 @@ public class spawningPlane : MonoBehaviour
         {
             yield return new WaitForSeconds(interval); // wait two minutes
             spawn();
-            interval *= timeScale; 
+            Time.timeScale += 0.01f;
+            timeS = Time.timeScale;            
         }
        
     }

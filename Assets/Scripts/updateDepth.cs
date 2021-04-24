@@ -13,7 +13,7 @@ public class updateDepth : MonoBehaviour
         falling = false;
         Debug.Log("collision"); 
     }
-    // Update is called once per frame
+    
     void Update()
     {
         if (falling)
