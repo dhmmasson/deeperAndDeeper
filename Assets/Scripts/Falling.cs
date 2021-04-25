@@ -12,26 +12,19 @@ public class Falling : MonoBehaviour
         previousHeight = transform.position.y; 
     }
 
-    // Update is called once per frame
+    //Move all obstacles tagged as falling. Use a dummy falling object to get the deplacement
     void FixedUpdate()
     {
         float dHeight = transform.position.y - previousHeight;
-        GameObject objectToDestroy = null ;
         obstacles = GameObject.FindGameObjectsWithTag("falling");
         foreach (GameObject obstacle in obstacles)
         {           
             obstacle.transform.Translate(new Vector3(0, dHeight, 0));
             if (obstacle.transform.position.y < 0)
             {
-                
-                objectToDestroy = obstacle; 
+                GameObject.Destroy(obstacle); ;
             }
-        }
-        if (objectToDestroy != null)
-        {
-            GameObject.Destroy(objectToDestroy); ;            
-        }
+        }       
         previousHeight = transform.position.y;
-
     }
 }
