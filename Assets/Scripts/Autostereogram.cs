@@ -4,17 +4,33 @@ using UnityEngine;
 
 public class Autostereogram : MonoBehaviour
 {
-    public Shader autostereogramShader;
-    public Material main; 
+    
+    public Material autoStereogram;
+    private bool _easyMode = false; 
+    public bool EasyMode
+    {
+        get { return _easyMode; }
+        set
+        {
+            _easyMode = value;
+            autoStereogram.SetFloat("_blend", _easyMode ? .5f : 0);
+        }
+    }
+
+    private void Awake()
+    {
+        EasyMode = false; 
+    }
     private void Start()
     {
        Camera.main.depthTextureMode = DepthTextureMode.Depth;
-       // Camera.main.SetReplacementShader(autostereogramShader, "Opaque");
+       
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        Graphics.Blit(source, destination, main);        
+        //Apply the autostereogram shader
+        Graphics.Blit(source, destination, autoStereogram);
     }
-
+   
 }

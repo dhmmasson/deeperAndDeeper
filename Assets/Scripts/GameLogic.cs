@@ -10,6 +10,7 @@ public class GameLogic : MonoBehaviour
     [Header("HUD - Depth indicator")]
     public GameObject fallingMarker;
     public TMP_Text Depth;
+    public GameObject GameUi;
     [Header("Shader")]
     public Autostereogram shader;
     [Header("Obstacle Spawning")]
@@ -26,13 +27,17 @@ public class GameLogic : MonoBehaviour
     private float savedTimeScale = 0;
 
     private bool menuEntered = false; 
+    
+
 
     private void Start()
     {
         Time.timeScale = 0;
         spawnPoint = GameObject.FindGameObjectsWithTag("Respawn")[0].transform; 
-        StartCoroutine("SpawnObstacle"); 
+        StartCoroutine("SpawnObstacle");
+        
     }
+
 
     void Update()
     {
@@ -100,21 +105,23 @@ public class GameLogic : MonoBehaviour
         started = true;
         falling = true; 
         fallingMarker.transform.position = new Vector3(5, 0, 0);
-        StartCoroutine(rampTime(1));
-        //Time.timeScale = 1;
-        Menu.SetActive(false);
+        savedTimeScale = 1;
+
+        ContinueGame();
     }
     void PauseGame()
     {
         savedTimeScale = timeScale; 
         Time.timeScale = 0;
         Menu.SetActive(true);
+        GameUi.SetActive(false);        
         paused = true; 
     }
     void ContinueGame() {
         //Time.timeScale = savedTimeScale;
         StartCoroutine(rampTime(savedTimeScale));
         Menu.SetActive(false);
+        GameUi.SetActive(true);         
         paused = false;
     }
 
@@ -153,12 +160,12 @@ public class GameLogic : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         falling = false;
-        shader.main.color = new Color(1, 0.8f, 0.8f, 1);
+        shader.autoStereogram.color = new Color(1, 0.8f, 0.8f, 1);
         StartCoroutine("Splash");
     }
     private IEnumerator Splash()
     {
         yield return new WaitForSeconds(0.1f); // wait two minutes
-        shader.main.color = Color.black ;
+        shader.autoStereogram.color = Color.black ;
     }
 }

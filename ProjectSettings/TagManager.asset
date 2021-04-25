@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - falling
+  - GameUi
+  - MenuUi
   layers:
   - Default
   - TransparentFX
