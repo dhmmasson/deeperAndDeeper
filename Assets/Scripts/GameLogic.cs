@@ -159,6 +159,6 @@ public class GameLogic : MonoBehaviour
     private IEnumerator Splash()
     {
         yield return new WaitForSeconds(0.1f); // wait two minutes
-        shader.main.color = Color.white;
+        shader.main.color = Color.black ;
     }
 }

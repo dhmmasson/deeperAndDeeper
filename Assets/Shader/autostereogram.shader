@@ -73,17 +73,7 @@ Shader "Autosterogram/Noise"
               depth = Linear01Depth(depth) ;
               depth = depth   ;
               depth = 1. - depth ;
-              return lerp( depth, depth*depth, 1)     ;
-            }
-
-            float2 tile( float2 uv ) {
-                float2 uv_t, gv_t, uv_s, gv_s  ;
-                uv_t = frac( uv * _MainTex_ST.xy +  _MainTex_ST.zw) ;
-                gv_t = ( _pixels != 0 ) ?  2.*floor(  _pixels*uv_t +.5 ) / _pixels : uv_t ;
-                uv_s =  1.- 2.*abs( uv_t  - 0.5 ) ; ;
-                gv_s = ( _pixels != 0 ) ? 2.*floor( _pixels * uv_s / 2. + .5 ) / _pixels   : uv_s ;
-                float border = sign( gv_s.x * gv_s.y) * (length( gv_s ) ) ;
-                return lerp( gv_s , N23( gv_t ).xy * border + N23( gv_s ).xy * (1-border), _blend  )   ;
+              return lerp( depth, depth*depth, _bwBlend)     ;
             }
 
             //From all all code of mine
@@ -91,15 +81,21 @@ Shader "Autosterogram/Noise"
             {
                 fixed4 col ; 
                 float width = 150. ;
-              	float maxDisplacement = 75. ;
-                float displacement = 0. ;
-                float2 gv ;
-                //_ScreenParams
+              	float maxDisplacement = 75. ;                
+
+                //Screen Uv coordinates 
                 float2 uv_original = i.uv ;
                 float2 uv_offset = uv_original  ;
+                //Square Grid Coordinate
+                float2 gv ;                
+                gv.y = frac( round( .5*_ScreenParams.x / width) * uv_original.y );                
+                gv.x = frac( ( uv_original.x * _ScreenParams.x ) / width  ) * width  ;
+
+                //Cumulative Displacement Algorithm
+                float displacement = 0. ;
                 float iteration = _ScreenParams.x / width + 1 ;
                 while( iteration > 0. ) {
-                  float l = normalizeDepth ( tex2D(  _CameraDepthTexture, uv_offset  ).x ) ; //* _ZBufferParams.z ;
+                  float l = normalizeDepth ( tex2D(  _CameraDepthTexture, uv_offset  ).x ) ; 
                   if( uv_offset.x > 0. ) {
                     displacement += l *maxDisplacement ;
                     uv_offset.x -= (width - maxDisplacement * l ) / _ScreenParams.x  ;
@@ -107,22 +103,22 @@ Shader "Autosterogram/Noise"
                   iteration -- ;
                 }
 
-                //Square Grid Coordinate
-                gv.y = frac( round( .5*_ScreenParams.x / width) * uv_original.y );                
-                gv.x = frac( ( uv_original.x * _ScreenParams.x ) / width  ) * width  ;
-                col = 0 ; 
-
-                  //décalage
+                
+                //décalage
                 gv.x += displacement ;
                 gv.x /= width ;
                 // Map to texture coordinate                    
                 gv = frac( gv ) ;
-                //Random tile noise
-                col.rg = tile( gv ) ;
-                col.rgb = N23( gv ).xyx * _Color  ;
-                //col.rgb =  tex2D(  _Noise, N23( gv ).xy  ) ;
-                
-                col.rgb = lerp( N23( gv ).xyx * _Color, normalizeDepth(tex2D(  _CameraDepthTexture, uv_original ).x) * _Color, _blend )  ; 
+
+                //Sample 2 point in the noise texture for color shifting 
+                float2 coord1 =  float2(sin( _Time.x*.01453+ .12987612),sin( _Time.x*.07852) ) ;
+                float2 coord2 =  float2(sin( _Time.x*.02353),cos( _Time.x*.05123 + .12987612) ) ;
+                float2 noise =  floor(N23( gv ).xy + 0.5);
+                noise = noise.xy * ( 1 - noise.yx ) ;
+                //Bicolor + warning color for the black pixels 
+                col.rgb = noise.x * tex2D(  _Noise, coord1 ) + noise.y * tex2D(  _Noise, coord2 ) + (1- noise.x - noise.y)  * _Color; 
+                //Debug or easy mode
+                col.rgb = lerp( col.rgb , normalizeDepth(tex2D(  _CameraDepthTexture, uv_original ).x), _blend )  ; 
                 return col;
             }
             ENDCG
