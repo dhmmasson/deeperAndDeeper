@@ -78,7 +78,7 @@ Material:
     - _ZWrite: 1
     - _blend: 0
     - _bwBlend: 1
-    - _pixels: 59
+    - _pixels: 66
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
