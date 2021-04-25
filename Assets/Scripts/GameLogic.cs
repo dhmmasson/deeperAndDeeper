@@ -21,8 +21,9 @@ public class GameLogic : MonoBehaviour
     private bool started = false;
     private bool paused = false; 
     private int currentDepth = 0;
-    private float savedTimeScale = 0; 
-    
+    private float savedTimeScale = 0;
+
+    private bool menuEntered = false; 
 
     private void Start()
     {
@@ -39,11 +40,6 @@ public class GameLogic : MonoBehaviour
         {
             MenuUpdate();
         }
-
-        
-        
-        
-
     }
 
     void GameInProgressUpdate()
@@ -65,13 +61,14 @@ public class GameLogic : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             PauseGame();
+            menuEntered = true;
         }
     }
     void MenuUpdate()
     {
         if (Input.anyKey)
         {
-            if (!Input.GetKey(KeyCode.Mouse0))
+            if (!Input.GetKey(KeyCode.Mouse0) && !menuEntered)
             {
                 if (paused)
                 {
@@ -81,9 +78,12 @@ public class GameLogic : MonoBehaviour
                     StartGame();
                 }
             }
+        } else
+        {
+            menuEntered = false;
         }
     }
-
+    //----------- Game State Logic -----------//
     void StartGame()
     {
         started = true;
