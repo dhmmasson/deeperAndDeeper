@@ -12,11 +12,13 @@ public class GameLogic : MonoBehaviour
     public TMP_Text Depth;
     [Header("Shader")]
     public Autostereogram shader;
-    [Header("Obstacle Spwaning")]
+    [Header("Obstacle Spawning")]
     public GameObject obstacle;
+    private Transform spawnPoint; 
     public float interval;
     public float timeScale = 0.99f;
-
+    [Header("Info")]
+    public float currentTimeScale = 0; 
     private bool falling = false ;
     private bool started = false;
     private bool paused = false; 
@@ -28,12 +30,15 @@ public class GameLogic : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 0;
+        spawnPoint = GameObject.FindGameObjectsWithTag("Respawn")[0].transform; 
+        StartCoroutine("SpawnObstacle"); 
     }
 
     void Update()
     {
+        currentTimeScale = Time.timeScale; 
         //Game Logic
-        if( started && !paused )
+        if ( started && !paused )
         {
             GameInProgressUpdate();
         } else
@@ -68,7 +73,11 @@ public class GameLogic : MonoBehaviour
     {
         if (Input.anyKey)
         {
-            if (!Input.GetKey(KeyCode.Mouse0) && !menuEntered)
+            //Check keypress but not if you just entered menu
+            if ( (Input.GetKey(KeyCode.Escape)
+               || Input.GetKey(KeyCode.LeftArrow)
+               || Input.GetKey(KeyCode.RightArrow)
+               || Input.GetKey(KeyCode.Space)) && !menuEntered)
             {
                 if (paused)
                 {
@@ -80,15 +89,19 @@ public class GameLogic : MonoBehaviour
             }
         } else
         {
+            //No key pressed for a frame 
             menuEntered = false;
         }
     }
     //----------- Game State Logic -----------//
     void StartGame()
     {
+        ClearGame();
         started = true;
+        falling = true; 
         fallingMarker.transform.position = new Vector3(5, 0, 0);
-        Time.timeScale = 1;
+        StartCoroutine(rampTime(1));
+        //Time.timeScale = 1;
         Menu.SetActive(false);
     }
     void PauseGame()
@@ -99,9 +112,28 @@ public class GameLogic : MonoBehaviour
         paused = true; 
     }
     void ContinueGame() {
-        Time.timeScale = savedTimeScale;
+        //Time.timeScale = savedTimeScale;
+        StartCoroutine(rampTime(savedTimeScale));
         Menu.SetActive(false);
         paused = false;
+    }
+
+    void ClearGame()
+    {
+        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("falling");
+        foreach (GameObject obstacle in obstacles)
+        {
+            GameObject.Destroy(obstacle); ;  
+        }
+    }
+    //----------- Ramp up game speed -----------//
+    private IEnumerator rampTime( float target)
+    {
+        while (Time.timeScale < target)
+        {
+            Time.timeScale += 0.1f;
+            yield return new WaitForSeconds(0.2f); // wait two minutes                        
+        }
     }
     //----------- Obstacle Spawning -----------//
     private IEnumerator SpawnObstacle()
@@ -110,12 +142,12 @@ public class GameLogic : MonoBehaviour
         {
             yield return new WaitForSeconds(interval); // wait two minutes
             spawn();
-            Time.timeScale += 0.01f;
+            Time.timeScale += 0.015f;
         }
     }
     private void spawn()
     {
-        Instantiate(obstacle, new Vector3(0, 50, 0), Quaternion.Euler(0, Random.Range(-90, 90), 0), this.transform);
+        Instantiate(obstacle, new Vector3(0, 50, 0), Quaternion.Euler(0, Random.Range(-90, 90), 0), spawnPoint);
     }
     //----------- Collision Handling -----------//
     void OnCollisionEnter(Collision collision)

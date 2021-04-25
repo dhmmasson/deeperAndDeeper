@@ -56,9 +56,8 @@ Shader "Autosterogram/Noise"
             }
             //Proablebly from shadertoy 
             float3 N23( float2 uv ) {         
-              return (hashOld33( float3( floor( _pixels*uv)/237., sin(_Time.y*0.003 ) ) ));
-              //   Smoooth noise between fram
-              //   +  hashOld33( float3( floor( 79.*uv)/237., sin( (_Time.y - unity_DeltaTime.x )*0.003 ) )))/2.   ;
+              return (hashOld33( float3( floor( _pixels*uv)/237., sin(_Time.y*0.003 ) ) )
+                +  hashOld33( float3( floor( _pixels*uv)/237., sin( (_Time.y - unity_DeltaTime.x )*0.003 ) )))/2.   ;
 
             }
 
@@ -74,7 +73,7 @@ Shader "Autosterogram/Noise"
               depth = Linear01Depth(depth) ;
               depth = depth   ;
               depth = 1. - depth ;
-              return lerp( depth, depth*depth, 0.5)     ;
+              return lerp( depth, depth*depth, 1)     ;
             }
 
             float2 tile( float2 uv ) {
@@ -122,7 +121,8 @@ Shader "Autosterogram/Noise"
                 col.rg = tile( gv ) ;
                 col.rgb = N23( gv ).xyx * _Color  ;
                 //col.rgb =  tex2D(  _Noise, N23( gv ).xy  ) ;
-              //  col.rgb = tex2D(  _MainTex, uv_original ) ; 
+                
+                col.rgb = lerp( N23( gv ).xyx * _Color, normalizeDepth(tex2D(  _CameraDepthTexture, uv_original ).x) * _Color, _blend )  ; 
                 return col;
             }
             ENDCG
