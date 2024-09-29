@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+title: Enter the Deeper Trance 
+message: "If you use this software, please cite it as below."
+authors:
+  - given-names: Dimitri
+    family-names: Masson
+    orcid: 'https://orcid.org/0000-0002-7072-3146'
+    email: dhm.masson@gmail.com
+identifiers:
+ - type: doi
+    value: 10.5281/zenodo.13857250
+    description: This DOI represents all versions, and will always resolve to the latest one.
+  - type: doi
+    value: 10.5281/zenodo.13857251
+    description: The versioned DOI for version 1.2.3 of the work.
+  - type: swh
+    value: "swh:1:dir:27863e0f6c7979f0a73f0f2cb4edef13de20d0f2"
+    description: The Software Heritage identifier for version 1.2.3 of the work.
+  - type: url
+    value: "https://github.com/dhmmasson/deeperAndDeeper/tree/v1.2.3"
+    description: The GitHub release URL of tag 1.2.3.
+version: v1.2.3
+date-released: 2021-04-26
+type: software
+repository-code: 'https://github.com/dhmmasson/deeperAndDeeper/tree/v1.2.3'
+url: 'https://dhmmasson.github.io/deeperAndDeeper/releases/compo/'
+abstract: >-
+  Enter the deeper trance" is a tunnel runner 
+  brought in 3d with autostereograms (magic images). 
+  Try to go deeper and deeper through the levels 
+  hypnotized by the musical illusion that descend 
+  infinitely until you reach the **deeper trance**!
+keywords:
+  - Ludum Dare
+  - Game
+  - Web
+license: MIT
